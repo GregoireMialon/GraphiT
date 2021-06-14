@@ -11,7 +11,7 @@ from torch_geometric import datasets
 from torch_geometric.utils.convert import to_networkx
 from transformer.models import DiffGraphTransformer, GraphTransformer
 from transformer.data import GraphDataset
-from transformer.data_io import display_multilayer_attns_and_graph, save_multilayer_attns, make_attns_gif
+from utils.data_io import display_multilayer_attns_and_graph, save_multilayer_attns, make_attns_gif
 from transformer.position_encoding import LapEncoding, POSENCODINGS
 from transformer.utils import count_parameters
 

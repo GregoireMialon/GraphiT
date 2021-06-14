@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import networkx as nx
+import numpy as np
+import torch
 
 from matplotlib.gridspec import GridSpec
 from torch_geometric.utils.convert import to_networkx
@@ -122,24 +124,48 @@ def make_attns_gif(args, sample, attns, pe):
     sample_nx = to_networkx(sample)
     sample_nx = to_networkx(sample, to_undirected=True)
     pe = pe[0]
-
-    for i in range(len(attns)):
-        avg_attns = attns[i][0].sum(dim=0) / len(attns[i][0])
+    
+    avg_attns = attns[2][0].sum(dim=0) / len(attns[2][0])
+    
     labels_dict = {}
+    for node in sample_nx.nodes:
+        labels_dict[node] = ATOMS[labels[node]]
     # color_map = []
+    vmin = 0
+    vmax = 0.1
     for node_idx in range(len(avg_attns)):
-        figure = plt.figure(figsize=(6, 4), dpi=300)
-        color_map = avg_attns[node_idx]
+        plt.figure()
+        color_map = torch.clone(avg_attns[node_idx]).tolist()
+        color_map[node_idx] = -1 
+        cmap = plt.get_cmap('viridis')
+        cmap.set_under('blue')
         for node in sample_nx.nodes:
-            labels_dict[node] = ATOMS[labels[node]]
+            labels_dict[node] = ATOMS[labels[node]] # + str(node)
             # color_map.append(ATOM_COLORS[ATOMS[labels[node]]])
+        # labels_dict[node_idx] = ATOMS[labels[node]]
+        plt.title(f"Attention scores from {labels_dict[node_idx]} atom", fontdict = {'fontsize' : 20})
         nx.draw(sample_nx, labels=labels_dict, node_color=color_map,
                 pos=nx.kamada_kawai_layout(sample_nx, weight=None),
-                font_color='white', font_size=15,
+                font_color='white',
+                font_size=15,
+                edge_color="grey",
+                vmin=vmin,
+                vmax=vmax,
+                width=2,
+                node_size=400,
+                cmap=cmap,
                 arrows=False)
         # plt.show()
-        plt.savefig(f"gif/attns_{node_idx}.pdf",
-                    format="pdf")
+        if node_idx < 10:
+            node_idx = str(0) + str(node_idx)
+        # plt.figure()
+        # plt.imshow(avg_attns)
+        sm = plt.cm.ScalarMappable(cmap=cmap, norm=plt.Normalize(vmin=vmin, vmax=vmax))
+        sm._A = []
+        plt.colorbar(sm)
+        # plt.savefig(f"../figures/gif/attns_{node_idx}.jpg",
+        #             format="jpg")
+        plt.show()
     return
 
 
