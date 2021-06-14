@@ -143,7 +143,10 @@ def make_attns_gif(args, sample, attns, pe):
             labels_dict[node] = ATOMS[labels[node]] # + str(node)
             # color_map.append(ATOM_COLORS[ATOMS[labels[node]]])
         # labels_dict[node_idx] = ATOMS[labels[node]]
-        plt.title(f"Attention scores from {labels_dict[node_idx]} atom", fontdict = {'fontsize' : 20})
+        # plt.title(f"Attention from {labels_dict[node_idx]} atom", fontdict = {'fontsize' : 20})
+        plt.figtext(0.35, 1.12, f"Attention from", fontsize=20, color='k', ha ='center', va='top')
+        plt.figtext(0.6, 1.12, f"{labels_dict[node_idx]} atom", fontsize=20, color='b', ha ='center', va='top')
+        # plt.figtext(0.50, 0.96, ' vs ', fontsize=20, color='k', ha ='center')	
         nx.draw(sample_nx, labels=labels_dict, node_color=color_map,
                 pos=nx.kamada_kawai_layout(sample_nx, weight=None),
                 font_color='white',
@@ -160,12 +163,13 @@ def make_attns_gif(args, sample, attns, pe):
             node_idx = str(0) + str(node_idx)
         # plt.figure()
         # plt.imshow(avg_attns)
-        sm = plt.cm.ScalarMappable(cmap=cmap, norm=plt.Normalize(vmin=vmin, vmax=vmax))
-        sm._A = []
-        plt.colorbar(sm)
-        # plt.savefig(f"../figures/gif/attns_{node_idx}.jpg",
-        #             format="jpg")
-        plt.show()
+        # sm = plt.cm.ScalarMappable(cmap=cmap, norm=plt.Normalize(vmin=vmin, vmax=vmax))
+        # sm._A = []
+        # plt.colorbar(sm)
+        plt.savefig(f"../figures/gif/attns_{node_idx}_{args.idx_sample}.jpg",
+		    bbox_inches='tight',
+                    format="jpg")
+        # plt.show()
     return
 
 
